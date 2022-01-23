@@ -1,50 +1,81 @@
+import { useCallback, useEffect, useState } from "react";
+import Child from "./Components/Child";
 import "./styles.css";
-import { useDispatch, useSelector } from "react-redux";
-
-import {
-  increaseCounter,
-  decreaseCounter
-} from "./redux/Counter/counter.action";
-import { addNewTODO, deleteTODO } from "./redux/List/list.action";
 
 export default function App() {
-  const dispatch = useDispatch();
-  const { count } = useSelector((state) => state.counter);
-  const { todo } = useSelector((state) => state.list);
+  const [todo, setTodo] = useState("");
+  const [todoList, setTodoList] = useState([]);
+  const [showType, setShowType] = useState("all");
+
+  useEffect(() => {
+    setTodo("");
+  }, [todoList]);
+
+  const handleItemClick = useCallback(
+    (index) => {
+      todoList[index] = {
+        ...todoList[index],
+        complete: !todoList[index].complete
+      };
+      setTodoList([...todoList]);
+    },
+    [todoList]
+  );
+
+  const handleShowType = (type) => {
+    setShowType(type);
+  };
 
   return (
     <div className="App">
-      <h1>Hello Daffodil</h1>
+      <h2>React Hooks</h2>
+      <input value={todo} onChange={(e) => setTodo(e.target.value)} />
       <button
-        onClick={() => {
-          dispatch(increaseCounter());
-        }}
+        onClick={() =>
+          todo.length && setTodoList([...todoList, { name: todo }])
+        }
       >
-        inc
+        Add
       </button>
-      <button
-        onClick={() => {
-          dispatch(decreaseCounter());
-        }}
+      <ul>
+        {todoList.map((item, index) =>
+          showType === "all" ||
+          (showType === "complete" && item.complete) ||
+          (showType === "uncomplete" && !item.complete) ? (
+            <li
+              key={index}
+              onClick={() => handleItemClick(index)}
+              style={{
+                textDecorationLine: item.complete ? "line-through" : "none"
+              }}
+            >
+              {item.name}
+            </li>
+          ) : null
+        )}
+      </ul>
+      Show :
+      <span
+        className={showType === "all" ? "" : "selected"}
+        onClick={() => handleShowType("all")}
       >
-        dec
-      </button>
-      <button
-        onClick={() => {
-          dispatch(addNewTODO(`count_${count}`));
-        }}
+        All
+      </span>
+      ,
+      <span
+        className={showType === "complete" ? "" : "selected"}
+        onClick={() => handleShowType("complete")}
       >
-        insert
-      </button>
-      <button
-        onClick={() => {
-          dispatch(deleteTODO(count));
-        }}
+        Complete
+      </span>
+      ,
+      <span
+        className={showType === "uncomplete" ? "" : "selected"}
+        onClick={() => handleShowType("uncomplete")}
       >
-        delete
-      </button>
-      <h2> count : {count}</h2>
-      {JSON.stringify(todo)}
+        Uncomplete
+      </span>
+      <Child />
     </div>
   );
 }

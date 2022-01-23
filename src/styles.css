@@ -2,3 +2,13 @@
   font-family: sans-serif;
   text-align: center;
 }
+
+li {
+  cursor: pointer;
+}
+
+.selected {
+  color: blue;
+  text-decoration-line: underline;
+  cursor: pointer;
+}
