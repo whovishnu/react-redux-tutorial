@@ -75,7 +75,7 @@ export default function App() {
       >
         Uncomplete
       </span>
-      <Child />
+      <Child name={todo} />
     </div>
   );
 }
